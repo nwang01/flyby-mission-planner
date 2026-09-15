@@ -21,3 +21,8 @@ spring:
 
 server:
   port: 8080
+
+app:
+  jwt:
+    secret: ${JWT_SECRET:ThisIsALocalDevSecretKeyForFlybyMissionPlannerChangeInProduction123456}
+    expiration-ms: ${JWT_EXPIRATION_MS:86400000}
