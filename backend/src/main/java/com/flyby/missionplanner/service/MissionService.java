@@ -7,9 +7,10 @@ import com.flyby.missionplanner.entity.Waypoint;
 import com.flyby.missionplanner.repository.MissionRepository;
 import java.time.Instant;
 import java.util.List;
-
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
+import com.flyby.missionplanner.exception.NotFoundException;
+import com.flyby.missionplanner.exception.AccessDeniedException;
 
 
 @Service
@@ -33,13 +34,13 @@ public class MissionService {
 
     public MissionResponse getById(Long id, Long userId, boolean isAdmin) {
         Mission mission = missionRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Mission not found: " + id));
+                .orElseThrow(() -> new NotFoundException("Mission not found: " + id));
 
         boolean canView = isAdmin
                 ? userId.equals(mission.getCreatedBy())
                 : userId.equals(mission.getAssignedPilotId());
         if (!canView) {
-            throw new RuntimeException("Access denied");
+            throw new AccessDeniedException("Access denied");
         }
         return toResponse(mission);
     }
@@ -64,9 +65,9 @@ public class MissionService {
 
     public MissionResponse update(Long id, UpdateMissionRequest req, Long userId) {
         Mission mission = missionRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Mission not found: " + id));
+                .orElseThrow(() -> new NotFoundException("Mission not found: " + id));
         if (!userId.equals(mission.getCreatedBy())) {
-            throw new RuntimeException("Access denied");
+            throw new AccessDeniedException("Access denied");
         }
         mission.setName(req.name());
         mission.setDescription(req.description());
@@ -89,9 +90,9 @@ public class MissionService {
 
     public void delete(Long id, Long userId) {
         Mission mission = missionRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Mission not found: " + id));
+                .orElseThrow(() -> new NotFoundException("Mission not found: " + id));
         if (!userId.equals(mission.getCreatedBy())) {
-            throw new RuntimeException("Access denied");
+            throw new AccessDeniedException("Access denied");
         }
         missionRepository.deleteById(id);
     }

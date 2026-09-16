@@ -68,12 +68,12 @@ test_auth() {
     code=$(curl -s -o /dev/null -w "%{http_code}" -X POST "$BASE/auth/login" \
         -H "Content-Type: application/json" \
         -d "{\"email\":\"$ADMIN_EMAIL\",\"password\":\"wrongpass\"}")
-    check_status "Wrong password should be rejected (403)" 403 "$code"
+    check_status "Wrong password should be rejected (401)" 401 "$code"
 
     code=$(curl -s -o /dev/null -w "%{http_code}" -X POST "$BASE/auth/login" \
         -H "Content-Type: application/json" \
         -d "{\"email\":\"nobody@flyby.com\",\"password\":\"whatever\"}")
-    check_status "Non-existent email should be rejected (403)" 403 "$code"
+    check_status "Non-existent email should be rejected (401)" 401 "$code"
 }
 
 test_me() {
