@@ -1,0 +1,110 @@
+
+.login-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle at 30% 20%, #1a2332 0%, #0d1117 60%);
+    padding: 24px;
+}
+
+.login-card {
+    width: 100%;
+    max-width: 360px;
+    background: #161b22;
+    border: 1px solid #2d333b;
+    border-radius: 14px;
+    padding: 40px 32px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+}
+
+.login-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.login-logo {
+    font-size: 28px;
+    color: #58a6ff;
+}
+
+.login-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #e6edf3;
+    letter-spacing: -0.5px;
+}
+
+.login-subtitle {
+    color: #8b949e;
+    font-size: 14px;
+    margin: 4px 0 32px 0;
+}
+
+.login-field {
+    margin-bottom: 18px;
+}
+
+.login-label {
+    display: block;
+    font-size: 13px;
+    color: #adbac7;
+    margin-bottom: 6px;
+}
+
+.login-input {
+    width: 100%;
+    padding: 11px 14px;
+    background: #0d1117;
+    border: 1px solid #2d333b;
+    border-radius: 8px;
+    color: #e6edf3;
+    font-size: 15px;
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.login-input::placeholder {
+    color: #565f6b;
+}
+
+.login-input:focus {
+    border-color: #58a6ff;
+    box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.15);
+}
+
+.login-button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 8px;
+    background: #238636;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.login-button:hover:not(:disabled) {
+    background: #2ea043;
+}
+
+.login-button:disabled {
+    background: #2d333b;
+    color: #8b949e;
+    cursor: not-allowed;
+}
+
+.login-error {
+    margin-top: 16px;
+    padding: 10px 12px;
+    background: rgba(248, 81, 73, 0.1);
+    border: 1px solid rgba(248, 81, 73, 0.3);
+    border-radius: 8px;
+    color: #ff7b72;
+    font-size: 14px;
+    text-align: center;
+}
