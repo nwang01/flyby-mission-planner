@@ -1,0 +1,19 @@
+.map-page {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+}
+
+.map-info {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    background: #161b22;
+    border: 1px solid #2d333b;
+    border-radius: 8px;
+    padding: 10px 16px;
+    color: #e6edf3;
+    font-family: sans-serif;
+    font-size: 14px;
+    z-index: 1;
+}
