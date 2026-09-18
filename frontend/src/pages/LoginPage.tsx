@@ -1,4 +1,6 @@
+
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import './LoginPage.css'
 
 function LoginPage() {
@@ -6,6 +8,8 @@ function LoginPage() {
     const [password, setPassword] = useState('')
     const [error, setError] = useState('')
     const [loading, setLoading] = useState(false)
+
+    const navigate = useNavigate()
 
     async function handleLogin() {
         setError('')
@@ -25,7 +29,7 @@ function LoginPage() {
             const data = await response.json()
             localStorage.setItem('token', data.token)
             console.log('Login success:', data)
-            alert('Login success! Role: ' + data.role)
+            navigate('/missions')
         } catch {
             setError('Something went wrong. Is the server running?')
         } finally {
