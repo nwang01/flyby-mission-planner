@@ -4,6 +4,7 @@ import DeckGL from '@deck.gl/react'
 import { ScatterplotLayer, PathLayer } from '@deck.gl/layers'
 import type { PickingInfo } from '@deck.gl/core'
 import 'mapbox-gl/dist/mapbox-gl.css'
+import { useNavigate } from 'react-router-dom'
 import './MapPage.css'
 
 
@@ -22,6 +23,10 @@ const INITIAL_VIEW = {
 
 function MapPage() {
     const [waypoints, setWaypoints] = useState<Waypoint[]>([])
+    const [showSaveDialog, setShowSaveDialog] = useState(false)
+    const [missionName, setMissionName] = useState('')
+
+    const navigate = useNavigate()
 
     function handleClick(info: PickingInfo) {
         if (info.object && info.index !== undefined && info.index >= 0) {
@@ -32,6 +37,41 @@ function MapPage() {
         if (!info.coordinate) return
         const [lng, lat] = info.coordinate
         setWaypoints([...waypoints, { lng, lat }])
+    }
+
+    function handleSave() {
+        if (waypoints.length === 0) {
+            alert('Add at least one waypoint first')
+            return
+        }
+        setShowSaveDialog(true)   // 打开对话框
+    }
+
+    async function confirmSave() {
+        if (!missionName.trim()) return
+        const token = localStorage.getItem('token')
+        try {
+            const response = await fetch('/api/v1/missions', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: 'Bearer ' + token,
+                },
+                body: JSON.stringify({
+                    name: missionName,
+                    waypoints: waypoints.map((w, i) => ({
+                        seq: i, lat: w.lat, lng: w.lng, altM: null, action: null,
+                    })),
+                }),
+            })
+            if (!response.ok) {
+                alert('Failed to save mission')
+                return
+            }
+            navigate('/missions')
+        } catch {
+            alert('Something went wrong')
+        }
     }
 
     const scatterLayer = new ScatterplotLayer({
@@ -69,8 +109,34 @@ function MapPage() {
             </DeckGL>
 
             <div className="map-info">
-                Waypoints: {waypoints.length}
+                <span>Waypoints: {waypoints.length}</span>
+                <button className="map-save-btn" onClick={handleSave}>
+                    Save Mission
+                </button>
             </div>
+
+            {showSaveDialog && (
+                <div className="dialog-overlay">
+                    <div className="dialog">
+                        <h2 className="dialog-title">Save Mission</h2>
+                        <input
+                            className="dialog-input"
+                            placeholder="Mission name"
+                            value={missionName}
+                            onChange={(e) => setMissionName(e.target.value)}
+                            autoFocus
+                        />
+                        <div className="dialog-actions">
+                            <button className="dialog-cancel" onClick={() => setShowSaveDialog(false)}>
+                                Cancel
+                            </button>
+                            <button className="dialog-confirm" onClick={confirmSave}>
+                                Save
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     )
 }
