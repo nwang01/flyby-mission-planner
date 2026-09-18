@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import './MissionListPage.css'
+import {useNavigate} from "react-router-dom";
 
 interface Mission {
     id: number
@@ -14,6 +15,10 @@ function MissionListPage() {
     const [missions, setMissions] = useState<Mission[]>([])
     const [error, setError] = useState('')
     const [loading, setLoading] = useState(true)
+
+    const navigate = useNavigate()
+    const role = localStorage.getItem('role')
+    const isAdmin = role === 'ADMIN'
 
     useEffect(() => {
         async function fetchMissions() {
@@ -42,6 +47,11 @@ function MissionListPage() {
             <div className="list-container">
                 <header className="list-header">
                     <h1 className="list-title">Missions</h1>
+                    {isAdmin && (
+                        <button className="list-create-btn" onClick={() => navigate('/map')}>
+                            + Create Mission
+                        </button>
+                    )}
                 </header>
 
                 {loading && <p className="list-muted">Loading…</p>}

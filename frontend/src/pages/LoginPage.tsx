@@ -28,6 +28,7 @@ function LoginPage() {
 
             const data = await response.json()
             localStorage.setItem('token', data.token)
+            localStorage.setItem('role', data.role)
             console.log('Login success:', data)
             navigate('/missions')
         } catch {
