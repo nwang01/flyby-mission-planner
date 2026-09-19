@@ -138,3 +138,114 @@
     background: #161b22;
     color: #e6edf3;
 }
+
+/* default alt */
+.map-alt-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #adbac7;
+}
+
+.map-alt-input {
+    width: 60px;
+    padding: 6px 8px;
+    background: #0d1117;
+    border: 1px solid #2d333b;
+    border-radius: 6px;
+    color: #e6edf3;
+    font-size: 14px;
+    outline: none;
+}
+
+.map-alt-input:focus {
+    border-color: #58a6ff;
+}
+
+/* waypoint detail sidebar */
+.wp-sidebar {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 260px;
+    background: #161b22;
+    border: 1px solid #2d333b;
+    border-radius: 10px;
+    padding: 20px;
+    color: #e6edf3;
+    font-family: sans-serif;
+    z-index: 2;
+}
+
+.wp-sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 18px;
+}
+
+.wp-close {
+    background: none;
+    border: none;
+    color: #8b949e;
+    font-size: 22px;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0;
+}
+
+.wp-close:hover {
+    color: #e6edf3;
+}
+
+.wp-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 14px;
+}
+
+.wp-field label {
+    font-size: 12px;
+    color: #8b949e;
+}
+
+.wp-field input {
+    width: 100%;
+    padding: 8px 10px;
+    background: #0d1117;
+    border: 1px solid #2d333b;
+    border-radius: 6px;
+    color: #e6edf3;
+    font-size: 14px;
+    outline: none;
+}
+
+.wp-field input:focus {
+    border-color: #58a6ff;
+}
+
+.wp-readonly {
+    font-size: 14px;
+    color: #adbac7;
+    padding: 2px 0;
+}
+
+.wp-delete {
+    width: 100%;
+    margin-top: 8px;
+    background: none;
+    border: 1px solid rgba(248, 81, 73, 0.4);
+    color: #ff7b72;
+    border-radius: 6px;
+    padding: 9px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.wp-delete:hover {
+    background: rgba(248, 81, 73, 0.1);
+}
