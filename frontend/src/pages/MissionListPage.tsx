@@ -42,17 +42,27 @@ function MissionListPage() {
         fetchMissions()
     }, [])
 
+    function handleLogout() {
+        localStorage.removeItem('token')
+        localStorage.removeItem('role')
+        navigate('/login')
+    }
+
     return (
         <div className="list-page">
             <div className="list-container">
                 <header className="list-header">
                     <h1 className="list-title">Missions</h1>
-                    {isAdmin && (
-                        <button className="list-create-btn" onClick={() => navigate('/map')}>
-                            + Create Mission
-                        </button>
-                    )}
+                    <button className="list-logout-btn" onClick={handleLogout}>
+                        Log out
+                    </button>
                 </header>
+                {isAdmin && (
+                    <button className="list-create-btn" onClick={() => navigate('/map')}>
+                        + Create Mission
+                    </button>
+                )}
+
 
                 {loading && <p className="list-muted">Loading…</p>}
                 {error && <p className="list-error">{error}</p>}
