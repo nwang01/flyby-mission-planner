@@ -6,10 +6,7 @@ import java.util.List;
 import java.util.Map;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -31,5 +28,10 @@ public class UserController {
     @PreAuthorize("hasRole('ADMIN')")
     public List<Map<String, Object>> listUsers(@RequestParam(required = false) Role role) {
         return userService.listByRole(role);
+    }
+
+    @GetMapping("/users/{id}")
+    public Map<String, Object> getUser(@PathVariable Long id) {
+        return userService.getById(id);
     }
 }

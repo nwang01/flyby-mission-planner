@@ -34,6 +34,7 @@ function MissionDetailPage() {
     const navigate = useNavigate()
     const [mission, setMission] = useState<MissionDetail | null>(null)
     const [error, setError] = useState('')
+    const [assignedPilotEmail, setAssignedPilotEmail] = useState('Unassigned')
 
     useEffect(() => {
         async function fetchMission() {
@@ -54,6 +55,25 @@ function MissionDetailPage() {
         }
         fetchMission()
     }, [id])
+
+    useEffect(() => {
+        if (!mission?.assignedPilotId) return
+        async function fetchAssignedPilot() {
+            const token = localStorage.getItem('token')
+            try {
+                const response = await fetch('/api/v1/users/' + mission?.assignedPilotId, {
+                    headers: { Authorization: 'Bearer ' + token },
+                })
+                if (response.ok) {
+                    const data = await response.json()
+                    setAssignedPilotEmail(data.email)
+                }
+            } catch (e) {
+                console.error(e)
+            }
+        }
+        fetchAssignedPilot()
+    }, [mission])
 
     if (error) return <div className="detail-page"><p className="detail-error">{error}</p></div>
     if (!mission) return <div className="detail-page"><p className="detail-muted">Loading…</p></div>
@@ -125,6 +145,10 @@ function MissionDetailPage() {
                             <span>{mission.speedMs} m/s</span>
                         </div>
                     )}
+                    <div className="detail-info-row">
+                        <span className="detail-label">Assigned Pilot</span>
+                        <span>{assignedPilotEmail}</span>
+                    </div>
 
                 </div>
                 {mission.description && <p className="detail-desc">{mission.description}</p>}
