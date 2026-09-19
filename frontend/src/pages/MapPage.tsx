@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Map from 'react-map-gl/mapbox'
 import DeckGL from '@deck.gl/react'
 import { ScatterplotLayer, PathLayer } from '@deck.gl/layers'
@@ -25,8 +25,28 @@ function MapPage() {
     const [waypoints, setWaypoints] = useState<Waypoint[]>([])
     const [showSaveDialog, setShowSaveDialog] = useState(false)
     const [missionName, setMissionName] = useState('')
+    const [pilots, setPilots] = useState<{ id: number; email: string }[]>([])
+    const [selectedPilotId, setSelectedPilotId] = useState<string>('')
 
     const navigate = useNavigate()
+
+    useEffect(() => {
+        async function fetchPilots() {
+            const token = localStorage.getItem('token')
+            try {
+                const response = await fetch('/api/v1/users?role=PILOT', {
+                    headers: { Authorization: 'Bearer ' + token },
+                })
+                if (response.ok) {
+                    const data = await response.json()
+                    setPilots(data)
+                }
+            } catch {
+                //ignore
+            }
+        }
+        fetchPilots()
+    }, [])
 
     function handleClick(info: PickingInfo) {
         if (info.object && info.index !== undefined && info.index >= 0) {
@@ -59,6 +79,7 @@ function MapPage() {
                 },
                 body: JSON.stringify({
                     name: missionName,
+                    assignedPilotId: selectedPilotId ? Number(selectedPilotId) : null,
                     waypoints: waypoints.map((w, i) => ({
                         seq: i, lat: w.lat, lng: w.lng, altM: null, action: null,
                     })),
@@ -126,6 +147,16 @@ function MapPage() {
                             onChange={(e) => setMissionName(e.target.value)}
                             autoFocus
                         />
+                        <select
+                            className="dialog-select"
+                            value={selectedPilotId}
+                            onChange={(e) => setSelectedPilotId(e.target.value)}
+                        >
+                            <option value="">Unassigned</option>
+                            {pilots.map((p) => (
+                                <option key={p.id} value={p.id}>{p.email}</option>
+                            ))}
+                        </select>
                         <div className="dialog-actions">
                             <button className="dialog-cancel" onClick={() => setShowSaveDialog(false)}>
                                 Cancel

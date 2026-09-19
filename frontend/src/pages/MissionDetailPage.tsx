@@ -119,6 +119,13 @@ function MissionDetailPage() {
                             <span>{mission.defaultAltitudeM} m</span>
                         </div>
                     )}
+                    {mission.speedMs && (
+                        <div className="detail-info-row">
+                            <span className="detail-label">Speed</span>
+                            <span>{mission.speedMs} m/s</span>
+                        </div>
+                    )}
+
                 </div>
                 {mission.description && <p className="detail-desc">{mission.description}</p>}
             </aside>
