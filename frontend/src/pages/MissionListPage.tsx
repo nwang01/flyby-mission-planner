@@ -64,7 +64,10 @@ function MissionListPage() {
                 {!loading && !error && missions.length > 0 && (
                     <div className="mission-grid">
                         {missions.map((m) => (
-                            <div key={m.id} className="mission-card">
+                            <div key={m.id}
+                                 className="mission-card"
+                                 onClick={() => navigate('/missions/' + m.id)}
+                            >
                                 <div className="mission-card-top">
                                     <span className="mission-name">{m.name}</span>
                                     <span className={`mission-status status-${m.status.toLowerCase()}`}>

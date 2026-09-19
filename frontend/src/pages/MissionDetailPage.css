@@ -1,0 +1,72 @@
+.detail-page {
+    display: flex;
+    height: 100vh;
+    background: #0d1117;
+}
+
+.detail-sidebar {
+    width: 320px;
+    flex-shrink: 0;
+    padding: 32px 28px;
+    overflow-y: auto;
+    border-right: 1px solid #2d333b;
+}
+
+.detail-back {
+    background: none;
+    border: 1px solid #2d333b;
+    color: #adbac7;
+    padding: 6px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-bottom: 24px;
+}
+
+.detail-back:hover {
+    border-color: #58a6ff;
+    color: #e6edf3;
+}
+
+.detail-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #e6edf3;
+    margin-bottom: 24px;
+    letter-spacing: -0.5px;
+}
+
+/* 信息列表 */
+.detail-info-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.detail-info-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    color: #e6edf3;
+}
+
+.detail-label {
+    color: #8b949e;
+}
+
+.detail-desc {
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid #2d333b;
+    color: #adbac7;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.detail-map {
+    flex: 1;
+    position: relative;
+}
+
+.detail-muted { color: #8b949e; padding: 40px; }
+.detail-error { color: #ff7b72; padding: 40px; }

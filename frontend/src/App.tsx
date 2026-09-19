@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import LoginPage from './pages/LoginPage'
 import MissionListPage from './pages/MissionListPage'
 import MapPage from "./pages/MapPage.tsx";
+import MissionDetailPage from "./pages/MissionDetailPage.tsx";
 
 function App() {
     return (
@@ -11,6 +12,7 @@ function App() {
                 <Route path="/missions" element={<MissionListPage />} />
                 <Route path="*" element={<Navigate to="/login" />} />
                 <Route path="/map" element={<MapPage />} />
+                <Route path="/missions/:id" element={<MissionDetailPage />} />
             </Routes>
         </BrowserRouter>
     )
