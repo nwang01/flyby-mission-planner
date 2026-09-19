@@ -123,10 +123,19 @@ function MapPage() {
         id: 'waypoints',
         data: waypoints,
         getPosition: (d: Waypoint) => [d.lng, d.lat],
-        getRadius: 8,
-        getFillColor: [88, 166, 255],
+        getRadius: (_d: Waypoint, { index }: { index: number }) =>
+            index === selectedIndex ? 11 : 8,
+        getFillColor: (_d: Waypoint, { index }: { index: number }) =>
+            index === selectedIndex ? [88, 215, 215] : [88, 166, 255],
         radiusUnits: 'pixels',
         pickable: true,
+        autoHighlight: true,
+        highlightColor: [255, 255, 255, 100],
+        //when to change
+        updateTriggers: {
+            getFillColor: selectedIndex,
+            getRadius: selectedIndex,
+        },
     })
 
     const pathLayer = new PathLayer({
@@ -146,6 +155,7 @@ function MapPage() {
                 controller={true}
                 layers={[pathLayer, scatterLayer]}
                 onClick={handleClick}
+                getCursor={({ isHovering }) => (isHovering ? 'pointer' : 'grab')}
             >
                 <Map
                     mapboxAccessToken={MAPBOX_TOKEN}
