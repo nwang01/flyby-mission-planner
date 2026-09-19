@@ -61,7 +61,8 @@ function MapPage() {
         if (!info.coordinate) return
         const [lng, lat] = info.coordinate
         const newWaypoint: Waypoint = {
-            lng, lat,
+            lng: Number(lng.toFixed(6)),
+            lat: Number(lat.toFixed(6)),
             altM: Number(defaultAltitude) || 0,
             action: '',
         }
@@ -77,7 +78,7 @@ function MapPage() {
         setShowSaveDialog(true)
     }
 
-    function updateSelectedWaypoint(field: 'altM' | 'action', value: number | string) {
+    function updateSelectedWaypoint(field: 'altM' | 'action' | 'lat' | 'lng', value: number | string ) {
         if (selectedIndex === null) return
         setWaypoints(waypoints.map((w, i) =>
             i === selectedIndex ? { ...w, [field]: value } : w
@@ -187,11 +188,38 @@ function MapPage() {
                     </div>
                     <div className="wp-field">
                         <label>Latitude</label>
-                        <span className="wp-readonly">{waypoints[selectedIndex].lat.toFixed(5)}</span>
+                        <input
+                            type="number"
+                            step="0.0001"
+                            value={waypoints[selectedIndex].lat}
+                            onChange={(e) => {
+                                const v = e.target.value
+                                //allow '-'
+                                if (v === '' || v === '-') {
+                                    updateSelectedWaypoint('lat', v)
+                                    return
+                                }
+                                const num = Number(v)
+                                if (!isNaN(num)) updateSelectedWaypoint('lat', num)
+                            }}
+                        />
                     </div>
                     <div className="wp-field">
                         <label>Longitude</label>
-                        <span className="wp-readonly">{waypoints[selectedIndex].lng.toFixed(5)}</span>
+                        <input
+                            type="number"
+                            step="0.0001"
+                            value={waypoints[selectedIndex].lng}
+                            onChange={(e) => {
+                                const v = e.target.value
+                                if (v === '' || v === '-') {
+                                    updateSelectedWaypoint('lng', v)
+                                    return
+                                }
+                                const num = Number(v)
+                                if (!isNaN(num)) updateSelectedWaypoint('lng', num)
+                            }}
+                        />
                     </div>
                     <div className="wp-field">
                         <label>Altitude (m)</label>
@@ -206,7 +234,7 @@ function MapPage() {
                         <input
                             value={waypoints[selectedIndex].action}
                             onChange={(e) => updateSelectedWaypoint('action', e.target.value)}
-                            placeholder="e.g. TAKE_PHOTO"
+                            placeholder="e.g. TAKE A PHOTO"
                         />
                     </div>
                     <button className="wp-delete" onClick={deleteSelectedWaypoint}>
