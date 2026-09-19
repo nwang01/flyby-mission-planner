@@ -70,3 +70,21 @@
 
 .detail-muted { color: #8b949e; padding: 40px; }
 .detail-error { color: #ff7b72; padding: 40px; }
+
+/* delete button */
+.detail-delete-btn {
+    margin-top: 24px;
+    width: 100%;
+    background: none;
+    border: 1px solid rgba(248, 81, 73, 0.4);
+    color: #ff7b72;
+    border-radius: 6px;
+    padding: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.detail-delete-btn:hover {
+    background: rgba(248, 81, 73, 0.1);
+}

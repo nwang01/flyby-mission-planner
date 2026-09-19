@@ -32,9 +32,13 @@ interface MissionDetail {
 function MissionDetailPage() {
     const { id } = useParams()
     const navigate = useNavigate()
+    const role = localStorage.getItem('role')
+    const isAdmin = role === 'ADMIN'
+
     const [mission, setMission] = useState<MissionDetail | null>(null)
     const [error, setError] = useState('')
     const [assignedPilotEmail, setAssignedPilotEmail] = useState('Unassigned')
+
 
     useEffect(() => {
         async function fetchMission() {
@@ -77,6 +81,24 @@ function MissionDetailPage() {
 
     if (error) return <div className="detail-page"><p className="detail-error">{error}</p></div>
     if (!mission) return <div className="detail-page"><p className="detail-muted">Loading…</p></div>
+
+    async function handleDelete() {
+        if (!confirm('Delete this mission? This cannot be undone.')) return
+        const token = localStorage.getItem('token')
+        try {
+            const response = await fetch('/api/v1/missions/' + id, {
+                method: 'DELETE',
+                headers: { Authorization: 'Bearer ' + token },
+            })
+            if (!response.ok) {
+                alert('Failed to delete')
+                return
+            }
+            navigate('/missions')   // 删除成功回列表
+        } catch {
+            alert('Something went wrong')
+        }
+    }
 
     //map
     const scatterLayer = new ScatterplotLayer({
@@ -152,6 +174,12 @@ function MissionDetailPage() {
 
                 </div>
                 {mission.description && <p className="detail-desc">{mission.description}</p>}
+
+                {isAdmin && (
+                    <button className="detail-delete-btn" onClick={handleDelete}>
+                        Delete Mission
+                    </button>
+                )}
             </aside>
 
             {/* right map */}
