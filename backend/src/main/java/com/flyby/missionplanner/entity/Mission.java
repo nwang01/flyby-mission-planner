@@ -59,6 +59,9 @@ public class Mission {
     @OrderBy("seq ASC")
     private List<Waypoint> waypoints = new ArrayList<>();
 
+    @Column(name = "drone_id")
+    private Long droneId;
+
     public Mission() {
     }
 
@@ -93,4 +96,6 @@ public class Mission {
     public void setUpdatedAt(Instant updatedAt) { this.updatedAt = updatedAt; }
     public List<Waypoint> getWaypoints() { return waypoints; }
     public void setWaypoints(List<Waypoint> waypoints) { this.waypoints = waypoints; }
+    public Long getDroneId() { return droneId; }
+    public void setDroneId(Long droneId) { this.droneId = droneId; }
 }
