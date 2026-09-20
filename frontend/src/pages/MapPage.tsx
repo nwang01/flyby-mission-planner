@@ -6,6 +6,7 @@ import type { PickingInfo } from '@deck.gl/core'
 import 'mapbox-gl/dist/mapbox-gl.css'
 import { useNavigate, useParams } from 'react-router-dom'
 import './MapPage.css'
+import { useRef } from 'react'
 
 
 const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN
@@ -21,6 +22,8 @@ const DEFAULT_INITIAL_VIEW = {
     longitude: -118.2437,
     latitude: 34.0522,
     zoom: 11,
+    pitch: 50,
+    bearing: 0,
 }
 
 function MapPage() {
@@ -31,10 +34,13 @@ function MapPage() {
     const [selectedPilotId, setSelectedPilotId] = useState<string>('')
     const [selectedIndex, setSelectedIndex] = useState<number | null>(null)
     const [defaultAltitude, setDefaultAltitude] = useState('40')
+    const [is3D, setIs3D] = useState(true)
+    const [mapStyle, setMapStyle] = useState('mapbox://styles/mapbox/dark-v11')
 
     const navigate = useNavigate()
     const { id } = useParams()
     const isEditMode = !!id
+    const mapRef = useRef<any>(null)
 
     useEffect(() => {
         async function fetchPilots() {
@@ -152,6 +158,69 @@ function MapPage() {
         }
     }
 
+    function toggle3D() {
+        const map = mapRef.current?.getMap?.() ?? mapRef.current
+        if (!map) return
+        if (is3D) {
+            map.easeTo({ pitch: 0, duration: 500 })
+            map.setTerrain(null)
+            if (map.getLayer('3d-buildings')) {
+                map.setLayoutProperty('3d-buildings', 'visibility', 'none')
+            }
+            setIs3D(false)
+        } else {
+            map.easeTo({ pitch: 50, duration: 500 })
+            map.setTerrain({ source: 'mapbox-dem', exaggeration: 1.5 })
+            if (map.getLayer('3d-buildings')) {
+                map.setLayoutProperty('3d-buildings', 'visibility', 'visible')
+            }
+            setIs3D(true)
+        }
+    }
+
+    function toggleMapStyle() {
+        const newStyle = mapStyle.includes('satellite')
+            ? 'mapbox://styles/mapbox/dark-v11'
+            : 'mapbox://styles/mapbox/satellite-streets-v12'
+        setMapStyle(newStyle)
+        const map = mapRef.current?.getMap?.() ?? mapRef.current
+        //listen
+        map?.once('style.load', () => setup3DFeatures(map))
+    }
+
+    function setup3DFeatures(map: any) {
+        //landscape
+        if (!map.getSource('mapbox-dem')) {
+            map.addSource('mapbox-dem', {
+                type: 'raster-dem',
+                url: 'mapbox://mapbox.mapbox-terrain-dem-v1',
+                tileSize: 512, maxzoom: 14,
+            })
+        }
+        //building
+        if (!map.getLayer('3d-buildings')) {
+            map.addLayer({
+                id: '3d-buildings', source: 'composite',
+                'source-layer': 'building',
+                filter: ['==', 'extrude', 'true'],
+                type: 'fill-extrusion', minzoom: 14,
+                paint: {
+                    'fill-extrusion-color': '#2d333b',
+                    'fill-extrusion-height': ['get', 'height'],
+                    'fill-extrusion-base': ['get', 'min_height'],
+                    'fill-extrusion-opacity': 0.8,
+                },
+            })
+        }
+        if (is3D) {
+            map.setTerrain({ source: 'mapbox-dem', exaggeration: 1.5 })
+            map.setLayoutProperty('3d-buildings', 'visibility', 'visible')
+        } else {
+            map.setTerrain(null)
+            map.setLayoutProperty('3d-buildings', 'visibility', 'none')
+        }
+    }
+
     const scatterLayer = new ScatterplotLayer({
         id: 'waypoints',
         data: waypoints,
@@ -190,8 +259,10 @@ function MapPage() {
                 getCursor={({ isHovering }) => (isHovering ? 'pointer' : 'grab')}
             >
                 <Map
+                    ref={mapRef}
                     mapboxAccessToken={MAPBOX_TOKEN}
-                    mapStyle="mapbox://styles/mapbox/dark-v11"
+                    mapStyle={mapStyle}
+                    onLoad={(e) => setup3DFeatures(e.target)}
                 />
             </DeckGL>
 
@@ -208,6 +279,15 @@ function MapPage() {
                 </label>
                 <button className="map-save-btn" onClick={handleSave}>
                     {isEditMode ? 'Update Mission' : 'Save Mission'}
+                </button>
+            </div>
+
+            <div className="map-controls">
+                <button className="map-3d-toggle" onClick={toggle3D}>
+                    {is3D ? 'to 2D' : 'to 3D'}
+                </button>
+                <button className="map-style-toggle" onClick={toggleMapStyle}>
+                    {mapStyle.includes('satellite') ? 'to Default' : 'to Satellite'}
                 </button>
             </div>
 

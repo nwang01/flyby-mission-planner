@@ -249,3 +249,30 @@
 .wp-delete:hover {
     background: rgba(248, 81, 73, 0.1);
 }
+
+.map-controls {
+    position: absolute;
+    top: 82px;
+    left: 16px;
+    z-index: 10;
+    display: flex;
+    gap: 10px;
+}
+
+.map-3d-toggle,
+.map-style-toggle {
+    height: 36px;
+    padding: 0 14px;
+    background: #161b22;
+    border: 1px solid #2d333b;
+    border-radius: 8px;
+    color: #e6edf3;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.map-3d-toggle:hover,
+.map-style-toggle:hover {
+    border-color: #58a6ff;
+}
