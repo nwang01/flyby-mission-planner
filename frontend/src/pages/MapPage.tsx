@@ -4,7 +4,7 @@ import DeckGL from '@deck.gl/react'
 import { ScatterplotLayer, PathLayer } from '@deck.gl/layers'
 import type { PickingInfo } from '@deck.gl/core'
 import 'mapbox-gl/dist/mapbox-gl.css'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import './MapPage.css'
 
 
@@ -17,7 +17,7 @@ interface Waypoint {
     action: string
 }
 
-const INITIAL_VIEW = {
+const DEFAULT_INITIAL_VIEW = {
     longitude: -118.2437,
     latitude: 34.0522,
     zoom: 11,
@@ -33,6 +33,8 @@ function MapPage() {
     const [defaultAltitude, setDefaultAltitude] = useState('40')
 
     const navigate = useNavigate()
+    const { id } = useParams()
+    const isEditMode = !!id
 
     useEffect(() => {
         async function fetchPilots() {
@@ -51,6 +53,34 @@ function MapPage() {
         }
         fetchPilots()
     }, [])
+
+    useEffect(() => {
+        //no id, new mission mode
+        if (!id) return
+        //edit mode
+        async function fetchMission() {
+            const token = localStorage.getItem('token')
+            try {
+                const response = await fetch('/api/v1/missions/' + id, {
+                    headers: { Authorization: 'Bearer ' + token },
+                })
+                if (!response.ok) return
+                const data = await response.json()
+                setMissionName(data.name)
+                setSelectedPilotId(data.assignedPilotId ? String(data.assignedPilotId) : '')
+                setDefaultAltitude(data.defaultAltitudeM ? String(data.defaultAltitudeM) : '40')
+                setWaypoints(data.waypoints.map((w: { lat: number; lng: number; altM: number | null; action: string | null }) => ({
+                    lat: w.lat,
+                    lng: w.lng,
+                    altM: w.altM ?? 0,
+                    action: w.action ?? '',
+                })))
+            } catch {
+                // ignore
+            }
+        }
+        fetchMission()
+    }, [id])
 
     function handleClick(info: PickingInfo) {
         if (info.object && info.index !== undefined && info.index >= 0) {
@@ -95,8 +125,10 @@ function MapPage() {
         if (!missionName.trim()) return
         const token = localStorage.getItem('token')
         try {
-            const response = await fetch('/api/v1/missions', {
-                method: 'POST',
+            const url = isEditMode ? '/api/v1/missions/' + id : '/api/v1/missions'
+            const method = isEditMode ? 'PUT' : 'POST'
+            const response = await fetch(url, {
+                method: method,
                 headers: {
                     'Content-Type': 'application/json',
                     Authorization: 'Bearer ' + token,
@@ -151,8 +183,7 @@ function MapPage() {
     return (
         <div className="map-page">
             <DeckGL
-                initialViewState={INITIAL_VIEW}
-                //spatial consistency across different layers during camera movements
+                initialViewState={DEFAULT_INITIAL_VIEW}
                 controller={true}
                 layers={[pathLayer, scatterLayer]}
                 onClick={handleClick}
@@ -176,7 +207,7 @@ function MapPage() {
                     />
                 </label>
                 <button className="map-save-btn" onClick={handleSave}>
-                    Save Mission
+                    {isEditMode ? 'Update Mission' : 'Save Mission'}
                 </button>
             </div>
 

@@ -174,7 +174,13 @@ function MissionDetailPage() {
 
                 </div>
                 {mission.description && <p className="detail-desc">{mission.description}</p>}
-
+                {/* admin: edit button */}
+                {isAdmin && (
+                    <button className="detail-edit-btn" onClick={() => navigate('/map/' + id)}>
+                        Edit Mission
+                    </button>
+                )}
+                {/* admin: delete button */}
                 {isAdmin && (
                     <button className="detail-delete-btn" onClick={handleDelete}>
                         Delete Mission

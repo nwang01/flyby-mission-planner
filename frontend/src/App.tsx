@@ -13,6 +13,7 @@ function App() {
                 <Route path="*" element={<Navigate to="/login" />} />
                 <Route path="/map" element={<MapPage />} />
                 <Route path="/missions/:id" element={<MissionDetailPage />} />
+                <Route path="/map/:id" element={<MapPage />} />
             </Routes>
         </BrowserRouter>
     )
