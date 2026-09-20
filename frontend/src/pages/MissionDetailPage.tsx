@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import './MissionDetailPage.css'
 import Map from 'react-map-gl/mapbox'
@@ -38,6 +38,10 @@ function MissionDetailPage() {
     const [mission, setMission] = useState<MissionDetail | null>(null)
     const [error, setError] = useState('')
     const [assignedPilotEmail, setAssignedPilotEmail] = useState('Unassigned')
+    const [is3D, setIs3D] = useState(true)
+    const mapRef = useRef<any>(null)
+    const [hoverInfo, setHoverInfo] = useState<{ x: number; y: number; wp: Waypoint } | null>(null)
+    const [mapStyle, setMapStyle] = useState('mapbox://styles/mapbox/dark-v11')
 
 
     useEffect(() => {
@@ -100,6 +104,60 @@ function MissionDetailPage() {
         }
     }
 
+    function apply3DState(map: any, enabled: boolean) {
+        if (enabled) {
+            map.setTerrain({ source: 'mapbox-dem', exaggeration: 1.5 })
+        } else {
+            map.setTerrain(null)
+        }
+        if (map.getLayer('3d-buildings')) {
+            map.setLayoutProperty('3d-buildings', 'visibility', enabled ? 'visible' : 'none')
+        }
+    }
+
+    function setup3DFeatures(map: any, enable3D: boolean) {
+        if (!map.getSource('mapbox-dem')) {
+            map.addSource('mapbox-dem', {
+                type: 'raster-dem',
+                url: 'mapbox://mapbox.mapbox-terrain-dem-v1',
+                tileSize: 512, maxzoom: 14,
+            })
+        }
+        if (!map.getLayer('3d-buildings')) {
+            map.addLayer({
+                id: '3d-buildings', source: 'composite',
+                'source-layer': 'building',
+                filter: ['==', 'extrude', 'true'],
+                type: 'fill-extrusion', minzoom: 14,
+                paint: {
+                    'fill-extrusion-color': '#2d333b',
+                    'fill-extrusion-height': ['get', 'height'],
+                    'fill-extrusion-base': ['get', 'min_height'],
+                    'fill-extrusion-opacity': 0.8,
+                },
+            })
+        }
+        apply3DState(map, enable3D)
+    }
+
+    function toggle3D() {
+        const map = mapRef.current?.getMap?.() ?? mapRef.current
+        if (!map) return
+        const next = !is3D
+        map.easeTo({ pitch: next ? 50 : 0, duration: 500 })
+        apply3DState(map, next)
+        setIs3D(next)
+    }
+
+    function toggleMapStyle() {
+        const newStyle = mapStyle.includes('satellite')
+            ? 'mapbox://styles/mapbox/dark-v11'
+            : 'mapbox://styles/mapbox/satellite-streets-v12'
+        setMapStyle(newStyle)
+        const map = mapRef.current?.getMap?.() ?? mapRef.current
+        map?.once('style.load', () => setup3DFeatures(map, is3D))
+    }
+
     //map
     const scatterLayer = new ScatterplotLayer({
         id: 'wp',
@@ -108,6 +166,7 @@ function MissionDetailPage() {
         getRadius: 8,
         getFillColor: [88, 166, 255],
         radiusUnits: 'pixels',
+        pickable: true,
     })
 
     const pathLayer = new PathLayer({
@@ -126,6 +185,8 @@ function MissionDetailPage() {
         longitude: firstWp ? firstWp.lng : -118.2437,
         latitude: firstWp ? firstWp.lat : 34.0522,
         zoom: 12,
+        pitch: 50,
+        bearing: 0,
     }
 
     return (
@@ -194,12 +255,42 @@ function MissionDetailPage() {
                     initialViewState={initialView}
                     controller={true}
                     layers={[pathLayer, scatterLayer]}
+                    onHover={(info) => {
+                        if (info.object) {
+                            setHoverInfo({ x: info.x, y: info.y, wp: info.object })
+                        } else {
+                            setHoverInfo(null)
+                        }
+                    }}
+                    getCursor={({ isHovering }) => (isHovering ? 'pointer' : 'grab')}
                 >
                     <Map
+                        ref={mapRef}
                         mapboxAccessToken={MAPBOX_TOKEN}
-                        mapStyle="mapbox://styles/mapbox/dark-v11"
+                        mapStyle={mapStyle}
+                        onLoad={(e) => setup3DFeatures(e.target, is3D)}
                     />
                 </DeckGL>
+
+                {hoverInfo && (
+                    <div
+                        className="wp-tooltip"
+                        style={{ left: hoverInfo.x + 12, top: hoverInfo.y + 12 }}
+                    >
+                        <div className="wp-tooltip-title">Waypoint {hoverInfo.wp.seq + 1}</div>
+                        <div>Lat: {hoverInfo.wp.lat.toFixed(6)}</div>
+                        <div>Lng: {hoverInfo.wp.lng.toFixed(6)}</div>
+                        <div>Alt: {hoverInfo.wp.altM ?? 'default'} m</div>
+                        <div>Action: {hoverInfo.wp.action ?? '—'}</div>
+                    </div>
+                )}
+
+                <button className="detail-3d-toggle" onClick={toggle3D}>
+                    {is3D ? 'to 2D' : 'to 3D'}
+                </button>
+                <button className="detail-style-toggle" onClick={toggleMapStyle}>
+                    {mapStyle.includes('satellite') ? 'to Default' : 'to Satellite'}
+                </button>
             </main>
         </div>
     )

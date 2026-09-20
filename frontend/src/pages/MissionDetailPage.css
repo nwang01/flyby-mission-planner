@@ -105,3 +105,61 @@
 .detail-edit-btn:hover {
     background: #2ea043;
 }
+
+.detail-3d-toggle {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    z-index: 2;
+    height: 40px;
+    padding: 0 16px;
+    background: #161b22;
+    border: 1px solid #2d333b;
+    border-radius: 8px;
+    color: #e6edf3;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+.detail-3d-toggle:hover {
+    border-color: #58a6ff;
+}
+
+.detail-style-toggle {
+    position: absolute;
+    top: 16px;
+    right: 95px;
+    z-index: 2;
+    height: 40px;
+    padding: 0 16px;
+    background: #161b22;
+    border: 1px solid #2d333b;
+    border-radius: 8px;
+    color: #e6edf3;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+.detail-style-toggle:hover {
+    border-color: #58a6ff;
+}
+
+.wp-tooltip {
+    position: absolute;
+    z-index: 5;
+    pointer-events: none;
+    background: #161b22;
+    border: 1px solid #2d333b;
+    border-radius: 8px;
+    padding: 10px 12px;
+    color: #e6edf3;
+    font-size: 12px;
+    line-height: 1.6;
+    font-family: sans-serif;
+}
+
+.wp-tooltip-title {
+    font-weight: 600;
+    margin-bottom: 4px;
+    color: #58a6ff;
+}
