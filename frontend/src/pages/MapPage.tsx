@@ -289,6 +289,10 @@ function MapPage() {
                 />
             </DeckGL>
 
+            <button className="map-back-btn" onClick={() => navigate('/missions')}>
+                ← Back
+            </button>
+
             <div className="map-info">
                 <span>Waypoints: {waypoints.length}</span>
                 <label className="map-alt-label">

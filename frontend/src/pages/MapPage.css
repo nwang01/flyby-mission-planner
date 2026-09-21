@@ -6,7 +6,7 @@
 
 .map-info {
     position: absolute;
-    top: 16px;
+    top: 56px;
     left: 16px;
     background: #161b22;
     border: 1px solid #2d333b;
@@ -254,7 +254,7 @@
 
 .map-controls {
     position: absolute;
-    top: 82px;
+    top: 122px;
     left: 16px;
     z-index: 10;
     display: flex;
@@ -277,4 +277,22 @@
 .map-3d-toggle:hover,
 .map-style-toggle:hover {
     border-color: #58a6ff;
+}
+
+.map-back-btn {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    z-index: 3;
+    background: #161b22;
+    border: 1px solid #2d333b;
+    color: #adbac7;
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-size: 14px;
+    cursor: pointer;
+}
+.map-back-btn:hover {
+    border-color: #58a6ff;
+    color: #e6edf3;
 }
