@@ -1,9 +1,8 @@
 # Flyby Mission Planner
 
-A full-stack drone mission planning prototype. Admins plan flight routes on an
-interactive map, assign them to pilots and drones, and manage a fleet; pilots
-view the missions assigned to them and mark them as flown. Inspired by DJI
-FlightHub 2, scoped as a demo/prototype rather than a full clone.
+A full-stack drone mission planning prototype. Admins can plan flight routes on an
+interactive map, assign them to pilots and drones, and manage a fleet. Pilots
+can view the missions assigned to them.
 
 ## Tech Stack
 
