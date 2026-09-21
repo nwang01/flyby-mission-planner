@@ -137,36 +137,6 @@ consistent JSON shape.
 map editor (create/edit), and fleet management, sharing a top navigation bar.
 In development, Vite proxies `/api` to the backend; in production, Nginx does.
 
-## Local Development (without Docker)
 
-```bash
-# Database
-docker run --name flyby-postgres \
-  -e POSTGRES_DB=missionplanner -e POSTGRES_USER=missionplanner \
-  -e POSTGRES_PASSWORD=missionplanner -p 5432:5432 -d postgres:16-alpine
 
-# Backend (from backend/)  — runs on :8080
-./mvnw spring-boot:run
 
-# Frontend (from frontend/) — runs on :5173, requires a Mapbox token
-echo "VITE_MAPBOX_TOKEN=your_token_here" > .env
-npm install && npm run dev
-```
-
-> The frontend needs a Mapbox access token (`VITE_MAPBOX_TOKEN`) for the map to
-> render. In the Docker build the token is baked in at build time from the same
-> env variable.
-
-## Scope & Trade-offs
-
-This is a prototype, so some things are intentionally simplified:
-
-- **No flight simulation.** The task is about *planning* and *managing*
-  missions, not executing flights. "Completion" is modeled as a status
-  (FLOWN) marked by the pilot, which is enough to drive fleet statistics.
-- **No scheduling.** A drone can be assigned to multiple missions over time;
-  time-based scheduling / conflict detection is out of scope for a prototype.
-- **Constant speed per mission.** Flight time is estimated as distance ÷ speed;
-  the data model could be extended to per-waypoint speed if needed.
-- **Single action per waypoint.** Real systems (e.g. DJI) support an action
-  sequence per waypoint; simplified here to one action.
