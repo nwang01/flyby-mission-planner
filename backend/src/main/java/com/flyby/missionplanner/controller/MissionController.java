@@ -65,6 +65,6 @@ public class MissionController {
     public MissionResponse changeStatus(@PathVariable Long id,
                                         @RequestBody StatusRequest req,
                                         Authentication auth) {
-        return missionService.changeStatus(id, req.status(), currentUserId(auth), isAdmin(auth));
+        return missionService.changeStatus(id, req.status(), req.version(), currentUserId(auth), isAdmin(auth));
     }
 }

@@ -28,6 +28,7 @@ interface MissionDetail {
     distanceM: number
     estimatedDurationS: number | null
     droneId: number | null
+    version: number
 }
 
 function MissionDetailPage() {
@@ -131,7 +132,7 @@ function MissionDetailPage() {
                     'Content-Type': 'application/json',
                     Authorization: 'Bearer ' + token,
                 },
-                body: JSON.stringify({ status: newStatus }),
+                body: JSON.stringify({ status: newStatus, version: mission?.version }),
             })
             if (!response.ok) {
                 const err = await response.json()

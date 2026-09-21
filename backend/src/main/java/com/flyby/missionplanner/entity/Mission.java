@@ -14,6 +14,8 @@ import jakarta.persistence.Table;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import jakarta.persistence.Version;   // 顶部 import
+
 
 
 @Entity
@@ -62,6 +64,9 @@ public class Mission {
     @Column(name = "drone_id")
     private Long droneId;
 
+    @Version
+    private Long version;
+
     public Mission() {
     }
 
@@ -98,4 +103,6 @@ public class Mission {
     public void setWaypoints(List<Waypoint> waypoints) { this.waypoints = waypoints; }
     public Long getDroneId() { return droneId; }
     public void setDroneId(Long droneId) { this.droneId = droneId; }
+    public Long getVersion() { return version; }
+    public void setVersion(Long version) { this.version = version; }
 }

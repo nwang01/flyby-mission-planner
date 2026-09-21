@@ -46,6 +46,11 @@ public class GlobalExceptionHandler {
         return build(HttpStatus.BAD_REQUEST, "Name already exists. Please use a different name.");
     }
 
+    @ExceptionHandler(org.springframework.orm.ObjectOptimisticLockingFailureException.class)
+    public ResponseEntity<ErrorResponse> handleOptimisticLock(org.springframework.orm.ObjectOptimisticLockingFailureException ex) {
+        return build(HttpStatus.CONFLICT, "This mission was just modified by someone else. Please refresh and try again.");
+    }
+
     private ResponseEntity<ErrorResponse> build(HttpStatus status, String message) {
         ErrorResponse body = new ErrorResponse(
                 status.value(),

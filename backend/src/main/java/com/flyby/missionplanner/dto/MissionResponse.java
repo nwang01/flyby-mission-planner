@@ -19,6 +19,7 @@ public record MissionResponse(
         Double distanceM,
         Integer estimatedDurationS,
         Instant createdAt,
-        Instant updatedAt
+        Instant updatedAt,
+        Long version
 ) {
 }

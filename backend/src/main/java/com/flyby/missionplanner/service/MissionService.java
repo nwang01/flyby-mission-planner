@@ -144,7 +144,8 @@ public class MissionService {
                 m.getDroneId(),
                 m.getDefaultAltitudeM(), m.getSpeedMs(),
                 waypoints, distanceM, durationS,
-                m.getCreatedAt(), m.getUpdatedAt()
+                m.getCreatedAt(), m.getUpdatedAt(),
+                m.getVersion()
         );
     }
 
@@ -168,10 +169,10 @@ public class MissionService {
         return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     }
 
-    public MissionResponse changeStatus(Long id, MissionStatus newStatus, Long currentUserId, boolean isAdmin) {
+    public MissionResponse changeStatus(Long id, MissionStatus newStatus, Long version, Long currentUserId, boolean isAdmin) {
         Mission mission = missionRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Mission not found: " + id));
-
+        mission.setVersion(version);
         MissionStatus current = mission.getStatus();
         boolean allowed;
         if (current == MissionStatus.DRAFT && newStatus == MissionStatus.READY) {
