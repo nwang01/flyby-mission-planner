@@ -1,0 +1,214 @@
+.fleet-page {
+    min-height: calc(100vh - 56px);
+    background: #0d1117;
+    padding: 40px 24px;
+}
+
+.fleet-container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.fleet-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 28px;
+}
+
+.fleet-title {
+    font-size: 26px;
+    font-weight: 700;
+    color: #e6edf3;
+    letter-spacing: -0.5px;
+}
+
+.fleet-add-btn {
+    background: #238636;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.fleet-add-btn:hover {
+    background: #2ea043;
+}
+
+.fleet-muted { color: #8b949e; font-size: 15px; }
+.fleet-error { color: #ff7b72; font-size: 15px; }
+
+/* drone cards grid */
+.drone-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 14px;
+}
+
+.drone-card {
+    background: #161b22;
+    border: 1px solid #2d333b;
+    border-radius: 10px;
+    padding: 18px 20px;
+}
+
+.drone-card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 6px;
+}
+
+.drone-name {
+    font-size: 16px;
+    font-weight: 600;
+    color: #e6edf3;
+}
+
+.drone-status {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 999px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.status-available {
+    background: rgba(46, 160, 67, 0.15);
+    color: #3fb950;
+}
+
+.status-maintenance {
+    background: rgba(210, 153, 34, 0.15);
+    color: #d29922;
+}
+
+.drone-model {
+    font-size: 13px;
+    color: #8b949e;
+    margin-bottom: 14px;
+}
+
+.drone-stats {
+    display: flex;
+    gap: 16px;
+    font-size: 13px;
+    color: #adbac7;
+    margin-bottom: 14px;
+}
+
+.drone-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.drone-edit,
+.drone-delete {
+    flex: 1;
+    padding: 6px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    background: none;
+    border: 1px solid #2d333b;
+    color: #adbac7;
+}
+
+.drone-edit:hover {
+    border-color: #58a6ff;
+    color: #58a6ff;
+}
+
+.drone-delete:hover {
+    border-color: #ff7b72;
+    color: #ff7b72;
+}
+
+/* dialog (same style as map save dialog) */
+.dialog-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+}
+
+.dialog {
+    background: #161b22;
+    border: 1px solid #2d333b;
+    border-radius: 12px;
+    padding: 28px;
+    width: 320px;
+    font-family: sans-serif;
+}
+
+.dialog-title {
+    color: #e6edf3;
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 16px;
+}
+
+.dialog-label {
+    display: block;
+    font-size: 13px;
+    color: #adbac7;
+    margin-bottom: 6px;
+}
+
+.dialog-input,
+.dialog-select {
+    width: 100%;
+    padding: 10px 12px;
+    background: #0d1117;
+    border: 1px solid #2d333b;
+    border-radius: 8px;
+    color: #e6edf3;
+    font-size: 15px;
+    outline: none;
+    margin-bottom: 16px;
+}
+
+.dialog-input:focus,
+.dialog-select:focus {
+    border-color: #58a6ff;
+}
+
+.dialog-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 8px;
+}
+
+.dialog-cancel {
+    background: none;
+    border: 1px solid #2d333b;
+    color: #adbac7;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.dialog-confirm {
+    background: #238636;
+    border: none;
+    color: #fff;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.dialog-confirm:hover {
+    background: #2ea043;
+}

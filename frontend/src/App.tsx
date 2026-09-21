@@ -3,6 +3,7 @@ import LoginPage from './pages/LoginPage'
 import MissionListPage from './pages/MissionListPage'
 import MapPage from "./pages/MapPage.tsx";
 import MissionDetailPage from "./pages/MissionDetailPage.tsx";
+import DroneListPage from './pages/DroneListPage'
 
 function App() {
     return (
@@ -14,6 +15,7 @@ function App() {
                 <Route path="/map" element={<MapPage />} />
                 <Route path="/missions/:id" element={<MissionDetailPage />} />
                 <Route path="/map/:id" element={<MapPage />} />
+                <Route path="/drones" element={<DroneListPage />} />
             </Routes>
         </BrowserRouter>
     )
