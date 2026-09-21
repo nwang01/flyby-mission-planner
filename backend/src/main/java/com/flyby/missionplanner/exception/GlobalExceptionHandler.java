@@ -41,6 +41,11 @@ public class GlobalExceptionHandler {
         return build(HttpStatus.BAD_REQUEST, ex.getMessage());
     }
 
+    @ExceptionHandler(org.springframework.dao.DataIntegrityViolationException.class)
+    public ResponseEntity<ErrorResponse> handleDataIntegrity(org.springframework.dao.DataIntegrityViolationException ex) {
+        return build(HttpStatus.BAD_REQUEST, "Name already exists. Please use a different name.");
+    }
+
     private ResponseEntity<ErrorResponse> build(HttpStatus status, String message) {
         ErrorResponse body = new ErrorResponse(
                 status.value(),

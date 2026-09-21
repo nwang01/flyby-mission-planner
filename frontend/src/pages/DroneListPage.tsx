@@ -78,7 +78,8 @@ function DroneListPage() {
                 body: JSON.stringify({ name, model, status }),
             })
             if (!response.ok) {
-                alert('Failed to save drone')
+                const err = await response.json()
+                alert(err.message || 'Failed to save drone')
                 return
             }
             setShowDialog(false)

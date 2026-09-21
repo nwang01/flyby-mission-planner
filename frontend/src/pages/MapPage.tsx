@@ -171,7 +171,8 @@ function MapPage() {
                 }),
             })
             if (!response.ok) {
-                alert('Failed to save mission')
+                const err = await response.json()
+                alert(err.message || 'Failed to save mission')
                 return
             }
             navigate('/missions')
