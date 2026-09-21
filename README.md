@@ -63,13 +63,13 @@ The database schema and seed users are created automatically on first startup
 
 ## Features
 
-**Roles & access control**
+**Roles and access control**
 - Two roles: **Admin** (full management) and **Pilot** (read-only on their own
   missions, plus marking them flown).
 - Each user only sees their own data (admins see missions they created; pilots
   see missions assigned to them). Enforced both in the UI and on the backend.
 
-**Mission planning (the core)**
+**Mission planning**
 - Interactive map to build a flight plan by clicking waypoints; connect them
   into a route; edit each waypoint (lat/lng/altitude/action) in a side panel.
 - 3D map view (terrain + 3D buildings) with a 2D/3D toggle, plus a
@@ -90,7 +90,7 @@ The database schema and seed users are created automatically on first startup
 - When a mission is marked FLOWN, the assigned drone's flight hours and
   missions-flown count are updated automatically.
 
-**Data integrity & concurrency**
+**Data integrity and concurrency**
 - Mission and drone names are globally unique (enforced by a database
   constraint, not an application-level check, so it holds under concurrency).
 - Optimistic locking (JPA `@Version`) on mission status changes prevents
