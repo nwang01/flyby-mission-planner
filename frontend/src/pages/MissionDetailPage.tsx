@@ -27,6 +27,7 @@ interface MissionDetail {
     waypoints: Waypoint[]
     distanceM: number
     estimatedDurationS: number | null
+    droneId: number | null
 }
 
 function MissionDetailPage() {
@@ -42,6 +43,7 @@ function MissionDetailPage() {
     const mapRef = useRef<any>(null)
     const [hoverInfo, setHoverInfo] = useState<{ x: number; y: number; wp: Waypoint } | null>(null)
     const [mapStyle, setMapStyle] = useState('mapbox://styles/mapbox/dark-v11')
+    const [droneName, setDroneName] = useState('None')
 
 
     useEffect(() => {
@@ -83,6 +85,22 @@ function MissionDetailPage() {
         fetchAssignedPilot()
     }, [mission])
 
+    useEffect(() => {
+        if (!mission?.droneId) return
+        async function fetchDrone() {
+            const token = localStorage.getItem('token')
+            try {
+                const response = await fetch('/api/v1/drones/' + mission?.droneId, {
+                    headers: { Authorization: 'Bearer ' + token },
+                })
+                if (response.ok) setDroneName((await response.json()).name)
+            } catch (e) {
+                console.error(e)
+            }
+        }
+        fetchDrone()
+    }, [mission])
+
     if (error) return <div className="detail-page"><p className="detail-error">{error}</p></div>
     if (!mission) return <div className="detail-page"><p className="detail-muted">Loading…</p></div>
 
@@ -98,7 +116,29 @@ function MissionDetailPage() {
                 alert('Failed to delete')
                 return
             }
-            navigate('/missions')   // 删除成功回列表
+            navigate('/missions')
+        } catch {
+            alert('Something went wrong')
+        }
+    }
+
+    async function changeStatus(newStatus: string) {
+        const token = localStorage.getItem('token')
+        try {
+            const response = await fetch('/api/v1/missions/' + id + '/status', {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: 'Bearer ' + token,
+                },
+                body: JSON.stringify({ status: newStatus }),
+            })
+            if (!response.ok) {
+                const err = await response.json()
+                alert(err.message || 'Failed to change status')
+                return
+            }
+            setMission(await response.json())
         } catch {
             alert('Something went wrong')
         }
@@ -203,6 +243,10 @@ function MissionDetailPage() {
                         <span>{mission.status}</span>
                     </div>
                     <div className="detail-info-row">
+                        <span className="detail-label">Drone</span>
+                        <span>{droneName}</span>
+                    </div>
+                    <div className="detail-info-row">
                         <span className="detail-label">Waypoints</span>
                         <span>{mission.waypoints.length}</span>
                     </div>
@@ -210,6 +254,12 @@ function MissionDetailPage() {
                         <span className="detail-label">Distance</span>
                         <span>{Math.round(mission.distanceM)} m</span>
                     </div>
+                    {mission.speedMs && (
+                        <div className="detail-info-row">
+                            <span className="detail-label">Speed</span>
+                            <span>{mission.speedMs} m/s</span>
+                        </div>
+                    )}
                     {mission.estimatedDurationS && (
                         <div className="detail-info-row">
                             <span className="detail-label">Est. duration</span>
@@ -237,8 +287,33 @@ function MissionDetailPage() {
                 {mission.description && <p className="detail-desc">{mission.description}</p>}
                 {/* admin: edit button */}
                 {isAdmin && (
-                    <button className="detail-edit-btn" onClick={() => navigate('/map/' + id)}>
+                    <button
+                        className="detail-edit-btn"
+                        onClick={() => navigate('/map/' + id)}
+                        disabled={mission.status !== 'DRAFT'}
+                    >
                         Edit Mission
+                    </button>
+                )}
+                {/* admin: draft ⟷ ready */}
+                {isAdmin && mission.status === 'DRAFT' && (
+                    <button className="detail-status-btn ready" onClick={() => changeStatus('READY')}>
+                        Mark as Ready
+                    </button>
+                )}
+                {isAdmin && mission.status === 'READY' && (
+                    <button className="detail-status-btn draft" onClick={() => changeStatus('DRAFT')}>
+                        Back to Draft
+                    </button>
+                )}
+                {/* pilot: ready → flown */}
+                {!isAdmin && (
+                    <button
+                        className="detail-status-btn flown"
+                        onClick={() => changeStatus('FLOWN')}
+                        disabled={mission.status !== 'READY'}
+                    >
+                        Mark as Flown
                     </button>
                 )}
                 {/* admin: delete button */}

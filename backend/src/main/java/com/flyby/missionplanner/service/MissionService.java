@@ -57,6 +57,7 @@ public class MissionService {
         mission.setStatus(MissionStatus.DRAFT);
         mission.setCreatedBy(userId);
         mission.setAssignedPilotId(req.assignedPilotId());
+        mission.setDroneId(req.droneId());
         mission.setDefaultAltitudeM(req.defaultAltitudeM());
         mission.setSpeedMs(req.speedMs());
         mission.setCreatedAt(Instant.now());
@@ -82,6 +83,7 @@ public class MissionService {
         mission.setDefaultAltitudeM(req.defaultAltitudeM());
         mission.setSpeedMs(req.speedMs());
         mission.setUpdatedAt(Instant.now());
+        mission.setDroneId(req.droneId());
 
         mission.clearWaypoints();
         //refresh
@@ -141,6 +143,7 @@ public class MissionService {
         return new MissionResponse(
                 m.getId(), m.getName(), m.getDescription(), m.getStatus(),
                 m.getCreatedBy(), m.getAssignedPilotId(),
+                m.getDroneId(),
                 m.getDefaultAltitudeM(), m.getSpeedMs(),
                 waypoints, distanceM, durationS,
                 m.getCreatedAt(), m.getUpdatedAt()

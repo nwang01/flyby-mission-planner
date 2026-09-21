@@ -12,6 +12,7 @@ public record MissionResponse(
         MissionStatus status,
         Long createdBy,
         Long assignedPilotId,
+        Long droneId,
         Double defaultAltitudeM,
         Double speedMs,
         List<WaypointDto> waypoints,

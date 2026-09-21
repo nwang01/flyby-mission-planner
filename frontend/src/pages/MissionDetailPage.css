@@ -163,3 +163,28 @@
     margin-bottom: 4px;
     color: #58a6ff;
 }
+
+.detail-status-btn {
+    margin-top: 12px;
+    width: 100%;
+    border: none;
+    border-radius: 6px;
+    padding: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    color: #fff;
+}
+.detail-status-btn.ready { background: #58a6ff; }
+.detail-status-btn.draft { background: #8b949e; }
+.detail-status-btn.flown { background: #238636; }
+.detail-status-btn:disabled {
+    background: #2d333b;
+    color: #8b949e;
+    cursor: not-allowed;
+}
+.detail-edit-btn:disabled {
+    background: #2d333b;
+    color: #8b949e;
+    cursor: not-allowed;
+}

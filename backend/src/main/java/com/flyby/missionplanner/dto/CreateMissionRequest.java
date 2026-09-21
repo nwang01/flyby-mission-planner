@@ -9,7 +9,8 @@ public record CreateMissionRequest(
         Long assignedPilotId,
         Double defaultAltitudeM,
         Double speedMs,
-        List<WaypointDto> waypoints
-) {
+        List<WaypointDto> waypoints,
+        Long droneId
+        ) {
 }
 
