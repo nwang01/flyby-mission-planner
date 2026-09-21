@@ -4,6 +4,8 @@ import com.flyby.missionplanner.dto.*;
 import com.flyby.missionplanner.entity.Mission;
 import com.flyby.missionplanner.entity.MissionStatus;
 import com.flyby.missionplanner.entity.Waypoint;
+import com.flyby.missionplanner.exception.BadRequestException;
+import com.flyby.missionplanner.repository.DroneRepository;
 import com.flyby.missionplanner.repository.MissionRepository;
 import java.time.Instant;
 import java.util.List;
@@ -18,9 +20,11 @@ import com.flyby.missionplanner.exception.AccessDeniedException;
 public class MissionService {
 
     private final MissionRepository missionRepository;
+    private final DroneRepository droneRepository;
 
-    public MissionService(MissionRepository missionRepository) {
+    public MissionService(MissionRepository missionRepository, DroneRepository droneRepository) {
         this.missionRepository = missionRepository;
+        this.droneRepository = droneRepository;
     }
 
 
@@ -162,4 +166,46 @@ public class MissionService {
                 * Math.sin(dLng / 2) * Math.sin(dLng / 2);
         return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     }
+
+    public MissionResponse changeStatus(Long id, MissionStatus newStatus, Long currentUserId, boolean isAdmin) {
+        Mission mission = missionRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Mission not found: " + id));
+
+        MissionStatus current = mission.getStatus();
+        boolean allowed;
+        if (current == MissionStatus.DRAFT && newStatus == MissionStatus.READY) {
+            allowed = isAdmin;
+            if (allowed && (mission.getAssignedPilotId() == null || mission.getDroneId() == null)) {
+                throw new BadRequestException("A pilot and a drone must be assigned before marking as ready");
+            }
+        } else if (current == MissionStatus.READY && newStatus == MissionStatus.DRAFT) {
+            allowed = isAdmin;
+        } else if (current == MissionStatus.READY && newStatus == MissionStatus.FLOWN) {
+            allowed = !isAdmin && currentUserId.equals(mission.getAssignedPilotId());
+        } else {
+            allowed = false;
+        }
+        if (!allowed) {
+            throw new AccessDeniedException("Status change not allowed");
+        }
+
+        mission.setStatus(newStatus);
+        mission.setUpdatedAt(Instant.now());
+        //statistics
+        if (newStatus == MissionStatus.FLOWN && mission.getDroneId() != null) {
+            droneRepository.findById(mission.getDroneId()).ifPresent(drone -> {
+                drone.setMissionsFlown(drone.getMissionsFlown() + 1);
+                double distance = calculateDistance(mission.getWaypoints());
+                if (mission.getSpeedMs() != null && mission.getSpeedMs() > 0) {
+                    double hours = (distance / mission.getSpeedMs()) / 3600.0;  // 秒→小时
+                    drone.setFlightHours(drone.getFlightHours() + hours);
+                }
+                droneRepository.save(drone);
+            });
+        }
+
+        return toResponse(missionRepository.save(mission));
+    }
+
+
 }

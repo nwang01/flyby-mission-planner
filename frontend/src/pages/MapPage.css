@@ -139,7 +139,8 @@
     color: #e6edf3;
 }
 
-/* default alt */
+/* default alt/spd */
+.map-spd-label,
 .map-alt-label {
     display: flex;
     align-items: center;
@@ -147,6 +148,7 @@
     color: #adbac7;
 }
 
+.map-spd-input,
 .map-alt-input {
     width: 60px;
     padding: 6px 8px;

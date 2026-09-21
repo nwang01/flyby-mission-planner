@@ -1,23 +1,13 @@
 package com.flyby.missionplanner.controller;
 
-import com.flyby.missionplanner.dto.CreateMissionRequest;
-import com.flyby.missionplanner.dto.MissionResponse;
-import com.flyby.missionplanner.dto.MissionSummary;
-import com.flyby.missionplanner.dto.UpdateMissionRequest;
+import com.flyby.missionplanner.dto.*;
 import com.flyby.missionplanner.service.MissionService;
 import jakarta.validation.Valid;
 import java.util.List;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 
 @RestController
@@ -69,5 +59,12 @@ public class MissionController {
     @PreAuthorize("hasRole('ADMIN')")
     public void delete(@PathVariable Long id, Authentication auth) {
         missionService.delete(id, currentUserId(auth));
+    }
+
+    @PatchMapping("/{id}/status")
+    public MissionResponse changeStatus(@PathVariable Long id,
+                                        @RequestBody StatusRequest req,
+                                        Authentication auth) {
+        return missionService.changeStatus(id, req.status(), currentUserId(auth), isAdmin(auth));
     }
 }

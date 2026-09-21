@@ -36,6 +36,9 @@ function MapPage() {
     const [defaultAltitude, setDefaultAltitude] = useState('40')
     const [is3D, setIs3D] = useState(true)
     const [mapStyle, setMapStyle] = useState('mapbox://styles/mapbox/dark-v11')
+    const [drones, setDrones] = useState<{ id: number; name: string }[]>([])
+    const [selectedDroneId, setSelectedDroneId] = useState<string>('')
+    const [defaultSpeed, setDefaultSpeed] = useState('5')
 
     const navigate = useNavigate()
     const { id } = useParams()
@@ -61,6 +64,21 @@ function MapPage() {
     }, [])
 
     useEffect(() => {
+        async function fetchDrones() {
+            const token = localStorage.getItem('token')
+            try {
+                const response = await fetch('/api/v1/drones', {
+                    headers: { Authorization: 'Bearer ' + token },
+                })
+                if (response.ok) setDrones(await response.json())
+            } catch (e) {
+                console.error(e)
+            }
+        }
+        fetchDrones()
+    }, [])
+
+    useEffect(() => {
         //no id, new mission mode
         if (!id) return
         //edit mode
@@ -75,6 +93,8 @@ function MapPage() {
                 setMissionName(data.name)
                 setSelectedPilotId(data.assignedPilotId ? String(data.assignedPilotId) : '')
                 setDefaultAltitude(data.defaultAltitudeM ? String(data.defaultAltitudeM) : '40')
+                setSelectedDroneId(data.droneId ? String(data.droneId) : '')
+                setDefaultSpeed(data.speedMs ? String(data.speedMs) : '5')
                 setWaypoints(data.waypoints.map((w: { lat: number; lng: number; altM: number | null; action: string | null }) => ({
                     lat: w.lat,
                     lng: w.lng,
@@ -142,7 +162,9 @@ function MapPage() {
                 body: JSON.stringify({
                     name: missionName,
                     assignedPilotId: selectedPilotId ? Number(selectedPilotId) : null,
+                    droneId: selectedDroneId ? Number(selectedDroneId) : null,
                     defaultAltitudeM: Number(defaultAltitude) || null,
+                    speedMs: Number(defaultSpeed) || null,
                     waypoints: waypoints.map((w, i) => ({
                         seq: i, lat: w.lat, lng: w.lng, altM: w.altM, action: w.action || null,
                     })),
@@ -277,6 +299,16 @@ function MapPage() {
                         onChange={(e) => setDefaultAltitude(e.target.value)}
                     />
                 </label>
+                <label className="map-spd-label">
+                    Speed (m/s):
+                    <input
+                        type="number"
+                        className="map-spd-input"
+                        value={defaultSpeed}
+                        onChange={(e) => setDefaultSpeed(e.target.value)}
+                    />
+                </label>
+
                 <button className="map-save-btn" onClick={handleSave}>
                     {isEditMode ? 'Update Mission' : 'Save Mission'}
                 </button>
@@ -373,6 +405,16 @@ function MapPage() {
                             <option value="">Unassigned</option>
                             {pilots.map((p) => (
                                 <option key={p.id} value={p.id}>{p.email}</option>
+                            ))}
+                        </select>
+                        <select
+                            className="dialog-select"
+                            value={selectedDroneId}
+                            onChange={(e) => setSelectedDroneId(e.target.value)}
+                        >
+                            <option value="">No drone</option>
+                            {drones.map((d) => (
+                                <option key={d.id} value={d.id}>{d.name}</option>
                             ))}
                         </select>
                         <div className="dialog-actions">
