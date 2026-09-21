@@ -21,20 +21,6 @@ can view the missions assigned to them.
 - Docker + Docker Compose (one-command startup)
 - Nginx serves the built frontend and proxies API calls
 
-### Why this stack
-
-- **Spring Boot + JPA + PostgreSQL** — a mature, well-documented backend
-  ecosystem for standard CRUD-heavy applications with relational data
-  (users, missions, waypoints, drones and their relationships).
-- **Flyway** — versioned, reproducible schema so the database is created
-  identically on any machine, with seed data, on first startup.
-- **JWT (stateless auth)** — no server-side session state, which suits an API
-  consumed by multiple clients (web now, mobile later).
-- **React + TypeScript + Vite** — required map libraries (deck.gl, react-map-gl,
-  mapbox-gl) are first-class in the React ecosystem; TypeScript adds
-  compile-time safety; Vite gives fast dev feedback.
-- **Docker Compose** — the whole system (database, backend, frontend) starts
-  with a single command and runs identically in any Linux environment.
 
 ## Quick Start
 
