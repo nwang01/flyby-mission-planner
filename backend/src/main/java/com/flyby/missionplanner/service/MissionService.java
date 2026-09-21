@@ -1,9 +1,7 @@
 package com.flyby.missionplanner.service;
 
 import com.flyby.missionplanner.dto.*;
-import com.flyby.missionplanner.entity.Mission;
-import com.flyby.missionplanner.entity.MissionStatus;
-import com.flyby.missionplanner.entity.Waypoint;
+import com.flyby.missionplanner.entity.*;
 import com.flyby.missionplanner.exception.BadRequestException;
 import com.flyby.missionplanner.repository.DroneRepository;
 import com.flyby.missionplanner.repository.MissionRepository;
@@ -190,6 +188,14 @@ public class MissionService {
         }
         if (!allowed) {
             throw new AccessDeniedException("Status change not allowed");
+        }
+
+        if (newStatus == MissionStatus.FLOWN && mission.getDroneId() != null) {
+            Drone drone = droneRepository.findById(mission.getDroneId())
+                    .orElseThrow(() -> new NotFoundException("Drone not found: " + mission.getDroneId()));
+            if (drone.getStatus() == DroneStatus.MAINTENANCE) {
+                throw new BadRequestException("Cannot mark as flown: the assigned drone is under maintenance");
+            }
         }
 
         mission.setStatus(newStatus);
