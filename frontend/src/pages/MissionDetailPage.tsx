@@ -204,8 +204,9 @@ function MissionDetailPage() {
         id: 'wp',
         data: mission.waypoints,
         getPosition: (d: Waypoint) => [d.lng, d.lat],
-        getRadius: 8,
-        getFillColor: [88, 166, 255],
+        getRadius: (_d: Waypoint, { index }: { index: number }) => (index === 0 ? 11 : 8),
+        getFillColor: (_d: Waypoint, { index }: { index: number }) =>
+            index === 0 ? [63, 185, 80] : [88, 166, 255],   // 起点绿，其余蓝
         radiusUnits: 'pixels',
         pickable: true,
     })
@@ -273,12 +274,7 @@ function MissionDetailPage() {
                             <span>{mission.defaultAltitudeM} m</span>
                         </div>
                     )}
-                    {mission.speedMs && (
-                        <div className="detail-info-row">
-                            <span className="detail-label">Speed</span>
-                            <span>{mission.speedMs} m/s</span>
-                        </div>
-                    )}
+
                     <div className="detail-info-row">
                         <span className="detail-label">Assigned Pilot</span>
                         <span>{assignedPilotEmail}</span>

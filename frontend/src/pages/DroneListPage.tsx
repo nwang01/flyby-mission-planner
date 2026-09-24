@@ -173,7 +173,7 @@ function DroneListPage() {
                             className="dialog-input"
                             value={model}
                             onChange={(e) => setModel(e.target.value)}
-                            placeholder="DJI Matrice 350"
+                            placeholder="Flyby F-11T"
                         />
                         <label className="dialog-label">Status</label>
                         <select
