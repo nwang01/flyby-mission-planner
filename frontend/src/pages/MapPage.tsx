@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import Map from 'react-map-gl/mapbox'
 import DeckGL from '@deck.gl/react'
-import { ScatterplotLayer, PathLayer } from '@deck.gl/layers'
+import { ScatterplotLayer, PathLayer, LineLayer } from '@deck.gl/layers'
 import type { PickingInfo } from '@deck.gl/core'
 import 'mapbox-gl/dist/mapbox-gl.css'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -247,7 +247,7 @@ function MapPage() {
     const scatterLayer = new ScatterplotLayer({
         id: 'waypoints',
         data: waypoints,
-        getPosition: (d: Waypoint) => [d.lng, d.lat],
+        getPosition: (d: Waypoint) => [d.lng, d.lat, d.altM],
         getRadius: (_d: Waypoint, { index }: { index: number }) =>
             index === selectedIndex ? 11 : 8,
         getFillColor: (_d: Waypoint, { index }: { index: number }) =>
@@ -265,10 +265,20 @@ function MapPage() {
 
     const pathLayer = new PathLayer({
         id: 'path',
-        data: waypoints.length > 1 ? [{ path: waypoints.map((w) => [w.lng, w.lat]) }] : [],
+        data: waypoints.length > 1 ? [{ path: waypoints.map((w) => [w.lng, w.lat, w.altM]) }] : [],
         getPath: (d) => d.path,
         getColor: [88, 166, 255],
         getWidth: 3,
+        widthUnits: 'pixels',
+    })
+
+    const dropLines = new LineLayer({
+        id: 'drop-lines',
+        data: waypoints,
+        getSourcePosition: (d: Waypoint) => [d.lng, d.lat, 0],
+        getTargetPosition: (d: Waypoint) => [d.lng, d.lat, d.altM],
+        getColor: [139, 148, 158, 140],
+        getWidth: 1,
         widthUnits: 'pixels',
     })
 
@@ -277,7 +287,7 @@ function MapPage() {
             <DeckGL
                 initialViewState={DEFAULT_INITIAL_VIEW}
                 controller={true}
-                layers={[pathLayer, scatterLayer]}
+                layers={[dropLines, pathLayer, scatterLayer]}
                 onClick={handleClick}
                 getCursor={({ isHovering }) => (isHovering ? 'pointer' : 'grab')}
             >

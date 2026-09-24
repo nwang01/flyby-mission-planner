@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import './MissionDetailPage.css'
 import Map from 'react-map-gl/mapbox'
 import DeckGL from '@deck.gl/react'
-import { ScatterplotLayer, PathLayer } from '@deck.gl/layers'
+import { ScatterplotLayer, PathLayer, LineLayer } from '@deck.gl/layers'
 import 'mapbox-gl/dist/mapbox-gl.css'
 
 const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN
@@ -203,7 +203,7 @@ function MissionDetailPage() {
     const scatterLayer = new ScatterplotLayer({
         id: 'wp',
         data: mission.waypoints,
-        getPosition: (d: Waypoint) => [d.lng, d.lat],
+        getPosition: (d: Waypoint) => [d.lng, d.lat, d.altM ?? mission.defaultAltitudeM ?? 0],
         getRadius: (_d: Waypoint, { index }: { index: number }) => (index === 0 ? 11 : 8),
         getFillColor: (_d: Waypoint, { index }: { index: number }) =>
             index === 0 ? [63, 185, 80] : [88, 166, 255],   // 起点绿，其余蓝
@@ -214,11 +214,21 @@ function MissionDetailPage() {
     const pathLayer = new PathLayer({
         id: 'path',
         data: mission.waypoints.length > 1
-            ? [{ path: mission.waypoints.map((w) => [w.lng, w.lat]) }]
+            ? [{ path: mission.waypoints.map((w) => [w.lng, w.lat, w.altM ?? mission.defaultAltitudeM ?? 0]) }]
             : [],
         getPath: (d) => d.path,
         getColor: [88, 166, 255],
         getWidth: 3,
+        widthUnits: 'pixels',
+    })
+
+    const dropLines = new LineLayer({
+        id: 'drop-lines',
+        data: mission.waypoints,
+        getSourcePosition: (d: Waypoint) => [d.lng, d.lat, 0],
+        getTargetPosition: (d: Waypoint) => [d.lng, d.lat, d.altM ?? mission.defaultAltitudeM ?? 0],
+        getColor: [139, 148, 158, 140],
+        getWidth: 1,
         widthUnits: 'pixels',
     })
 
@@ -326,7 +336,7 @@ function MissionDetailPage() {
                 <DeckGL
                     initialViewState={initialView}
                     controller={true}
-                    layers={[pathLayer, scatterLayer]}
+                    layers={[dropLines, pathLayer, scatterLayer]}
                     onHover={(info) => {
                         if (info.object) {
                             setHoverInfo({ x: info.x, y: info.y, wp: info.object })
